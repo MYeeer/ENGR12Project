@@ -1,11 +1,41 @@
 #include <Arduino.h>
 
+// Pin Assignments go here
+const int basementLED = 0;
+const int policeRedLED = 0;
+const int policeBlueLED = 0;
+const int houseLED = 0;
+const int buzzer = 0; 
+const int doorSwitch = 0;
+const int windowSwitch = 0;
+const int dadSwitch = 0;
+const int daughterSwitch = 0;
+const int systemActiveSwitch = 0;
+
 // put function declarations here:
-int myFunction(int, int);
+void basementResponse(){
+  // Static Green LED inside basement
+
+}
+
+void policeResponse(){
+  // Flashing red & blue LED outside of house
+}
+
+void houseIsRobbed(){
+  // Static Red LED inside house
+}
+
+void alarmTriggered(){
+  // Flashing Red LED inside house + Buzzer sound
+}
+
+void systemActive(){
+  // Static Green LED on
+}
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  
 }
 
 void loop() {
