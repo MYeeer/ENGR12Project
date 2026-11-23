@@ -13,8 +13,7 @@ const int policeRedLED = 9;   // Red
 const int policeBlueLED = 10; // Blue
 const int buzzer = 11;
 
-enum HouseState
-{
+enum HouseState{
   HOUSE_OFF,
   HOUSE_ALARM,
   HOUSE_ROBBED,
@@ -40,8 +39,7 @@ void policeOff();
 void houseOff();
 void buzzerOff();
 
-void setup()
-{
+void setup(){
   // IC Chip Setup
   pinMode(basement, INPUT);
   pinMode(callCops, INPUT);
@@ -63,49 +61,39 @@ void setup()
   houseOff();
 }
 
-void loop()
-{
+void loop(){
   // Basement group
-  if (digitalRead(basement) == HIGH)
-  {
+  if (digitalRead(basement) == HIGH){
     basementResponse();
   }
-  else
-  {
+  else{
     basementOff();
   }
 
   // Police group
-  if (digitalRead(callCops) == HIGH)
-  {
+  if (digitalRead(callCops) == HIGH){
     policeResponse();
   }
-  else
-  {
+  else{
     policeOff();
   }
 
   // House group (one state at a time)
-  if (digitalRead(robberyDetected) == HIGH)
-  {
+  if (digitalRead(robberyDetected) == HIGH){
     houseState = HOUSE_ALARM;
   }
-  else if (digitalRead(robberySuccessful) == HIGH)
-  {
+  else if (digitalRead(robberySuccessful) == HIGH){
     houseState = HOUSE_ROBBED;
   }
-  else if (digitalRead(houseIsSafe) == HIGH)
-  {
+  else if (digitalRead(houseIsSafe) == HIGH){
     houseState = HOUSE_SAFE;
   }
-  else
-  {
+  else{
     houseState = HOUSE_OFF;
   }
 
   // Clear the house LEDs and buzzer whenever the state changes
-  if (houseState != lastHouseState)
-  {
+  if (houseState != lastHouseState){
     houseOff();
     alarmToggle = false;
     lastAlarmToggle = millis();
@@ -113,13 +101,11 @@ void loop()
   }
 
   // Buzzer is only allowed to run during the alarm state
-  if (houseState != HOUSE_ALARM)
-  {
+  if (houseState != HOUSE_ALARM){
     buzzerOff();
   }
 
-  switch (houseState)
-  {
+  switch (houseState){
     case HOUSE_ALARM:
       alarmTriggered();
       break;
@@ -134,87 +120,72 @@ void loop()
   }
 }
 
-void basementResponse()
-{
+void basementResponse(){
   digitalWrite(basementLED, HIGH);
 }
 
-void policeResponse()
-{
+void policeResponse(){
   unsigned long now = millis();
 
   // Alternate red/blue every 1250 ms
-  if (now - lastPoliceToggle >= 1250)
-  {
+  if (now - lastPoliceToggle >= 1250){
     lastPoliceToggle = now;
     policeToggle = !policeToggle;
   }
 
-  if (policeToggle)
-  {
+  if (policeToggle){
     digitalWrite(policeRedLED, HIGH);
     digitalWrite(policeBlueLED, LOW);
   }
-  else
-  {
+  else{
     digitalWrite(policeRedLED, LOW);
     digitalWrite(policeBlueLED, HIGH);
   }
 }
 
-void alarmTriggered()
-{
+void alarmTriggered(){
   unsigned long now = millis();
 
   digitalWrite(buzzer, HIGH);
 
   // Flash the house red LED every 1000 ms
-  if (now - lastAlarmToggle >= 1000)
-  {
+  if (now - lastAlarmToggle >= 1000){
     lastAlarmToggle = now;
     alarmToggle = !alarmToggle;
   }
 
-  if (alarmToggle)
-  {
+  if (alarmToggle){
     digitalWrite(houseLEDRed, HIGH);
   }
-  else
-  {
+  else{
     digitalWrite(houseLEDRed, LOW);
   }
 }
 
-void houseIsRobbed()
-{
+void houseIsRobbed(){
   digitalWrite(houseLEDRed, HIGH);
 }
 
-void allClear()
-{
+void allClear(){
   digitalWrite(houseLEDGreen, HIGH);
 }
 
-void basementOff()
-{
+void basementOff(){
   digitalWrite(basementLED, LOW);
 }
 
-void policeOff()
-{
+void policeOff(){
   digitalWrite(policeRedLED, LOW);
   digitalWrite(policeBlueLED, LOW);
   policeToggle = false;
   lastPoliceToggle = millis();
 }
 
-void buzzerOff()
-{
+void buzzerOff(){
   digitalWrite(buzzer, LOW);
 }
 
-void houseOff()
-{
+void houseOff(){
   digitalWrite(houseLEDGreen, LOW);
   digitalWrite(houseLEDBlue, LOW);
   digitalWrite(houseLEDRed, LOW);
