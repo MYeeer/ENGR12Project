@@ -1,24 +1,23 @@
 #include <Arduino.h>
 
-const int basement = 0;
-const int callCops = 1;
-const int robberySuccessful = 2;
-const int robberyDetected = 3;
-const int houseIsSafe = 4;
+// Inputs from the logic circuit
+const int basement = 0;          // Family in basement
+const int basementFailed = 1;    // Family not in basement
+const int robberyDetected = 2;   // Robbery detected and cops called
+const int robberySuccessful = 3; // House is robbed
+const int houseIsSafe = 4;       // All clear
+
+// Outputs
 const int houseLEDGreen = 5;
 const int houseLEDBlue = 6;
 const int houseLEDRed = 7;
-const int basementLED = 8;    // Green
-const int policeRedLED = 9;   // Red
-const int policeBlueLED = 10; // Blue
-const int buzzer = 11;
+const int basementLEDGreen = 8;
+const int basementLEDRed = 9;
+const int policeRedLED = 10;
+const int policeBlueLED = 11;
+const int buzzer = 12;
 
-enum HouseState{
-  HOUSE_OFF,
-  HOUSE_ALARM,
-  HOUSE_ROBBED,
-  HOUSE_SAFE
-};
+enum HouseState{HOUSE_OFF, HOUSE_ALARM, HOUSE_ROBBED, HOUSE_SAFE};
 
 HouseState houseState = HOUSE_OFF;
 HouseState lastHouseState = HOUSE_OFF;
@@ -29,7 +28,8 @@ bool policeToggle = false;
 unsigned long lastAlarmToggle = 0;
 bool alarmToggle = false;
 
-void basementResponse();
+void basementGreenResponse();
+void basementRedResponse();
 void policeResponse();
 void alarmTriggered();
 void houseIsRobbed();
@@ -42,7 +42,7 @@ void buzzerOff();
 void setup(){
   // IC Chip Setup
   pinMode(basement, INPUT);
-  pinMode(callCops, INPUT);
+  pinMode(basementFailed, INPUT);
   pinMode(robberyDetected, INPUT);
   pinMode(robberySuccessful, INPUT);
   pinMode(houseIsSafe, INPUT);
@@ -51,7 +51,8 @@ void setup(){
   pinMode(houseLEDGreen, OUTPUT);
   pinMode(houseLEDBlue, OUTPUT);
   pinMode(houseLEDRed, OUTPUT);
-  pinMode(basementLED, OUTPUT);
+  pinMode(basementLEDGreen, OUTPUT);
+  pinMode(basementLEDRed, OUTPUT);
   pinMode(policeRedLED, OUTPUT);
   pinMode(policeBlueLED, OUTPUT);
   pinMode(buzzer, OUTPUT);
@@ -62,16 +63,19 @@ void setup(){
 }
 
 void loop(){
-  // Basement group
-  if (digitalRead(basement) == HIGH){
-    basementResponse();
+  // Basement group (one color at a time)
+  if (digitalRead(basementFailed) == HIGH){
+    basementRedResponse();
+  }
+  else if (digitalRead(basement) == HIGH){
+    basementGreenResponse();
   }
   else{
     basementOff();
   }
 
   // Police group
-  if (digitalRead(callCops) == HIGH){
+  if (digitalRead(robberyDetected) == HIGH){
     policeResponse();
   }
   else{
@@ -120,8 +124,14 @@ void loop(){
   }
 }
 
-void basementResponse(){
-  digitalWrite(basementLED, HIGH);
+void basementGreenResponse(){
+  digitalWrite(basementLEDRed, LOW);
+  digitalWrite(basementLEDGreen, HIGH);
+}
+
+void basementRedResponse(){
+  digitalWrite(basementLEDGreen, LOW);
+  digitalWrite(basementLEDRed, HIGH);
 }
 
 void policeResponse(){
@@ -171,7 +181,8 @@ void allClear(){
 }
 
 void basementOff(){
-  digitalWrite(basementLED, LOW);
+  digitalWrite(basementLEDGreen, LOW);
+  digitalWrite(basementLEDRed, LOW);
 }
 
 void policeOff(){
